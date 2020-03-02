@@ -2,7 +2,7 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @date         2020-03-03
-// @version      0.3.0
+// @version      0.3.1
 // @description  Для упрощения подсчёта количества работ
 // @author       sx007
 // @match        .antiplagiat.ru/teacherCabinet
@@ -18,14 +18,15 @@ var listRabot = document.querySelector('.students-list');
 /*Если находимся в кабинете Преподавателя*/
 if(elementPage){
     /*Создаём и вставляем ссылку-кнопку Посчитать*/
-    var block = document.querySelector('.task-description'),
-    link = document.createElement('A');
-    link.href = '#';
-    link.classList.add('mylink');
-    link.textContent = 'Посчитать';
-    link.onclick = countLog;
-    link.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-    block.insertBefore(link, block.children[0]);
+    var block = document.querySelector('.task-description');
+    var linkBut = document.createElement('A');
+    linkBut.href = '#';
+    linkBut.classList.add('mylink');
+    linkBut.textContent = 'Посчитать';
+    linkBut.title = "Посчитать количество человек и количество попыток";
+    linkBut.onclick = countLog;
+    linkBut.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+    block.insertBefore(linkBut, block.children[0]);
 }
 
 
@@ -41,7 +42,7 @@ if(listRabot){
 
 
     /*Функция по созданию ссылок на PDF*/
-    function createPdf(){
+    function createBut(){
         var tableSt = Array.from(document.querySelectorAll('tr.student'));
         /*Разбираем каждую строку таблицы (элемент массива)*/
         for (var i = 0; i < tableSt.length; i++) {
@@ -49,12 +50,20 @@ if(listRabot){
             /*чтобы потом добавить кнопку на экспорт PDF*/
             var elementPage = tableSt[i].getAttribute("data-docid");
             //console.log(elementPage);
-            var block = tableSt[i].querySelector('div.report'),
-                link = document.createElement('A');
-            link.href = '/report/export/'+elementPage+'?v=1&short=False&c=1';
-            link.textContent = 'PDF';
-            link.target = '_blank';
-            block.insertBefore(link, block.children[0]);
+            var block = tableSt[i].querySelector('div.report');
+            var linkPdf = document.createElement('A');
+            linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False&c=1';
+            linkPdf.textContent = 'PDF';
+            linkPdf.title = "Ссылка на экспорт отчёта";
+            linkPdf.target = '_blank';
+            /*Создаем ссылку на полный отчёт*/
+            var linkRep = document.createElement('A');
+            linkRep.href = '/report/full/'+elementPage+'?v=1&c=1';
+            linkRep.textContent = 'Отчёт';
+            linkRep.title = "Ссылка на полный отчёт";
+            linkRep.target = '_blank';
+            block.insertBefore(linkPdf, block.children[0]);
+            block.insertBefore(linkRep, block.children[1]);
         }
     }
 
@@ -62,7 +71,7 @@ if(listRabot){
     /*создаем кнопки PDF*/
     if (!nowStyleLoad.style.display){
         //console.log('при загрузке');
-        createPdf();
+        createBut();
     }
 
     // Указываем настройки для observer
@@ -80,7 +89,7 @@ if(listRabot){
         /*Если выставлено None, тогда вызываем функцию создания кнопок*/
         if(styleLoad == 'none'){
             //console.log('Обновились без перезагрузки');
-            createPdf();
+            createBut();
         }
     };
     // Создаем экземпляр наблюдения, связанный с функцией обратного вызова

@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
-// @date         2020-03-03
-// @version      0.3.1
+// @date         2020-03-05
+// @version      0.3.2
 // @description  Для упрощения подсчёта количества работ
 // @author       sx007
 // @match        .antiplagiat.ru/teacherCabinet
@@ -52,13 +52,13 @@ if(listRabot){
             //console.log(elementPage);
             var block = tableSt[i].querySelector('div.report');
             var linkPdf = document.createElement('A');
-            linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False&c=1';
+            linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False';
             linkPdf.textContent = 'PDF';
             linkPdf.title = "Ссылка на экспорт отчёта";
             linkPdf.target = '_blank';
             /*Создаем ссылку на полный отчёт*/
             var linkRep = document.createElement('A');
-            linkRep.href = '/report/full/'+elementPage+'?v=1&c=1';
+            linkRep.href = '/report/full/'+elementPage+'?v=1';
             linkRep.textContent = 'Отчёт';
             linkRep.title = "Ссылка на полный отчёт";
             linkRep.target = '_blank';

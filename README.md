@@ -16,3 +16,7 @@
 Дополнительные кнопки `PDF` и `Отчёт`: 
 
 <img src="https://i.imgur.com/4tFy4hZ.jpg" alt="Дополнительные кнопки" />
+
+Дополнительная кнопка `@` для копирования e-mail студента в буфер обмена: 
+
+<img src="https://i.imgur.com/ndJAPkC.jpg" alt="Копировать e-mail" />

@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2020-05-02
-// @version      0.4.3
+// @date         2020-05-04
+// @version      0.4.4
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -90,9 +90,11 @@ if(listRabot){
             linkRep.title = "Ссылка на полный отчёт";
             linkRep.target = '_blank';
             //Вставляем заготовленные кнопки перед Показать результаты
-            block.insertBefore(linkMail, block.children[0]);
-            block.insertBefore(linkPdf, block.children[1]);
-            block.insertBefore(linkRep, block.children[2]);
+            if(block.children[0]){
+                block.insertBefore(linkMail, block.children[0]);
+                block.insertBefore(linkPdf, block.children[1]);
+                block.insertBefore(linkRep, block.children[2]);
+            }
         }
     }
 

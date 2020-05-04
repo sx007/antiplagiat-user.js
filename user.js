@@ -89,8 +89,9 @@ if(listRabot){
             linkRep.textContent = 'Отчёт';
             linkRep.title = "Ссылка на полный отчёт";
             linkRep.target = '_blank';
-            //Вставляем заготовленные кнопки перед Показать результаты
+            //Проверяем есть ли div с результатами проверки
             if(block != null){
+                //Вставляем заготовленные кнопки перед Показать результаты
                 block.insertBefore(linkMail, block.children[0]);
                 block.insertBefore(linkPdf, block.children[1]);
                 block.insertBefore(linkRep, block.children[2]);

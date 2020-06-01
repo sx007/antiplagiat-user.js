@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2020-05-04
-// @version      0.4.4.1
+// @date         2020-06-01
+// @version      0.4.5
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -50,11 +50,15 @@ if(listRabot){
         for (var i = 0; i < tableSt.length; i++) {
             //Блок Отчётов / результатов
             var block = tableSt[i].querySelector('div.report');
-
             /*Создаем ссылку на копирование адреса почты*/
 
-            var blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
-
+            //Проверяем блок с ФИО на наличие ссылки, где есть эл.почта
+            if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                var blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+            } else {
+                var blockMail = null;
+            }
+            
             var linkMail = document.createElement('A');
             linkMail.textContent = '@';
             linkMail.href = '#';
@@ -63,13 +67,17 @@ if(listRabot){
             //Находим индекс и по нему получаем адрес эл.почты
             linkMail.addEventListener('click', (function(i) {
                 return function() {
-                    var tableStu = Array.from(document.querySelectorAll('tr.student'));
-                    var infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
+                    //Проверяем, есть ли адрес эл.почты
+                    if (blockMail != null) {
+                        var tableStu = Array.from(document.querySelectorAll('tr.student'));
+                        var infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
+                    } else {
+                        var infoMail = "null";
+                    }
                     //Копируем в буфер обмена
                     GM_setClipboard(infoMail,"text");
                 }
             })(i), false);
-
 
             /*Создаем ссылку на PDF*/
 

@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2020-06-01
-// @version      0.4.5
+// @version      0.4.6
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -53,12 +53,13 @@ if(listRabot){
             /*Создаем ссылку на копирование адреса почты*/
 
             //Проверяем блок с ФИО на наличие ссылки, где есть эл.почта
+            var blockMail = "";
             if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
-                var blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
             } else {
-                var blockMail = null;
+                blockMail = null;
             }
-            
+
             var linkMail = document.createElement('A');
             linkMail.textContent = '@';
             linkMail.href = '#';
@@ -68,11 +69,19 @@ if(listRabot){
             linkMail.addEventListener('click', (function(i) {
                 return function() {
                     //Проверяем, есть ли адрес эл.почты
-                    if (blockMail != null) {
-                        var tableStu = Array.from(document.querySelectorAll('tr.student'));
-                        var infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
+                    var eMail = "";
+                    var infoMail = "";
+                    if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                        eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
                     } else {
-                        var infoMail = "null";
+                         eMail = null;
+                    }
+                    //Добавляем содержимое для буфера обмена
+                    if (eMail != null) {
+                        var tableStu = Array.from(document.querySelectorAll('tr.student'));
+                        infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
+                    } else {
+                        infoMail = "";
                     }
                     //Копируем в буфер обмена
                     GM_setClipboard(infoMail,"text");
@@ -101,6 +110,7 @@ if(listRabot){
             if(block != null){
                 //Вставляем заготовленные кнопки перед Показать результаты
                 block.children[0].innerHTML="Подробнее";
+                block.children[0].target = "_blank";
                 block.insertBefore(linkMail, block.children[0]);
                 block.insertBefore(linkPdf, block.children[1]);
                 block.insertBefore(linkRep, block.children[2]);

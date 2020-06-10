@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2020-06-01
-// @version      0.4.6
+// @date         2020-06-10
+// @version      0.4.7
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -88,6 +88,41 @@ if(listRabot){
                 }
             })(i), false);
 
+            /*Создаем ссылку на копирование ФИО*/
+            var eMail = "";
+            if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+            } else {
+                eMail = null;
+            }
+            var linkFIO = document.createElement('A');
+            linkFIO.textContent = '👤';
+            linkFIO.href = '#';
+            linkFIO.title = "Скопировать ФИО";
+            linkFIO.setAttribute('id' , eMail);
+            //Находим индекс и по нему получаем адрес эл.почты
+            linkFIO.addEventListener('click', (function(i) {
+                return function() {
+                    //Проверяем, есть ли адрес эл.почты
+                    var infoFIO = "";
+                    var infoEMail = "";
+                    if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                        infoEMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                    } else {
+                         infoEMail = null;
+                    }
+                    //Добавляем содержимое для буфера обмена
+                    if (infoEMail != null) {
+                        var tableStUs = Array.from(document.querySelectorAll('tr.student'));
+                        infoFIO = tableStUs[i].querySelector('div.name > a').innerHTML;
+                    } else {
+                        infoFIO = "";
+                    }
+                    //Копируем в буфер обмена
+                    GM_setClipboard(infoFIO,"text");
+                }
+            })(i), false);
+
             /*Создаем ссылку на PDF*/
 
             /*Получаем в каждой строке таблицы значение data-docid*/
@@ -112,8 +147,9 @@ if(listRabot){
                 block.children[0].innerHTML="Подробнее";
                 block.children[0].target = "_blank";
                 block.insertBefore(linkMail, block.children[0]);
-                block.insertBefore(linkPdf, block.children[1]);
-                block.insertBefore(linkRep, block.children[2]);
+                block.insertBefore(linkFIO, block.children[1]);
+                block.insertBefore(linkPdf, block.children[2]);
+                block.insertBefore(linkRep, block.children[3]);
             }
         }
     }

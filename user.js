@@ -3,10 +3,11 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-03-30
-// @version      0.5.1
+// @version      0.5.2
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
+// @match        https://*.antiplagiat.ru/report/full/*
 // @grant        GM_setClipboard
 // @updateURL    https://github.com/sx007/antiplagiat-user.js/raw/master/user.js
 // @downloadURL  https://github.com/sx007/antiplagiat-user.js/raw/master/user.js
@@ -17,6 +18,7 @@
 var elementPage = document.querySelector('.task-description');
 /*Таблица со списком присланных работ*/
 var listRabot = document.querySelector('.students-list');
+
 
 /*Если находимся в кабинете Преподавателя*/
 if(elementPage){
@@ -49,6 +51,27 @@ if(elementPage){
     block.insertBefore(linkButUpd, block.children[0]);
 }
 
+/*Полоса меню полного отчёта*/
+var fullRepPage = document.querySelector('.main-inner');
+var gradeRep = document.querySelector('.report-grade');
+if(fullRepPage){
+    //Проверяем наличие кнопки Оценить
+    if(gradeRep){
+        var titleDiv = document.querySelector('.title');
+        //Функция эмуляции клика на пункт меню
+        function grClick() {
+            gradeRep.click();
+        }
+        //Кнопка Оценить
+        var gradeBut = document.createElement('A');
+        gradeBut.href = '#';
+        gradeBut.textContent = 'Оценить';
+        gradeBut.title = "Вызывает окно оценки работы";
+        gradeBut.onclick = grClick;
+        gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+        titleDiv.insertBefore(gradeBut, titleDiv.children[0]);
+    }
+}
 
 /*Если находимся в кабинете Преподавателя и есть список работ*/
 /*то добавляем дополнительные кнопки*/

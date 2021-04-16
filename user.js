@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-03-30
-// @version      0.5.2
+// @date         2021-04-16
+// @version      0.5.3
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -41,11 +41,12 @@ if(elementPage){
     linkButUpd.title = "Обновить данные данного задания";
     linkButUpd.onclick = function(){
         //Получаем ID задания и курса
-        var tree = document.querySelector('div.tree-element-active');
-        var treeAid = tree.getAttribute("data-id");
-        var treeAc = tree.getAttribute("data-courseid");
+        //var tree = document.querySelector('div.tree-element-active');
+        //var treeAid = tree.getAttribute("data-id");
+        //var treeAc = tree.getAttribute("data-courseid");
         //console.log(treeAid, treeAc);
-        updateStudentsView(treeAid, treeAc, null, null, null, null, !0, !0);
+        //updateStudentsView(treeAid, treeAc, null, null, null, null, !0, !0);
+        updateStudentsView(null, null, null, 100);
     };
     linkButUpd.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     block.insertBefore(linkButUpd, block.children[0]);

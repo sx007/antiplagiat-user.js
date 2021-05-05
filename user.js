@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-04-16
-// @version      0.5.3
+// @date         2021-05-05
+// @version      0.5.4
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -19,7 +19,6 @@ var elementPage = document.querySelector('.task-description');
 /*Таблица со списком присланных работ*/
 var listRabot = document.querySelector('.students-list');
 
-
 /*Если находимся в кабинете Преподавателя*/
 if(elementPage){
     /*Создаём и вставляем ссылку-кнопку Посчитать*/
@@ -27,16 +26,19 @@ if(elementPage){
     //Кнопка Посчитать
     var linkBut = document.createElement('A');
     linkBut.href = '#';
-    linkBut.classList.add('mylink');
+    linkBut.classList.add('btnCountWork');
+    linkBut.setAttribute('id' , 'btnCountWork');
     linkBut.textContent = 'Посчитать';
     linkBut.title = "Посчитать количество человек и количество попыток";
     linkBut.onclick = countLog;
     linkBut.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     block.insertBefore(linkBut, block.children[0]);
+
     //Кнопка Обновить
     var linkButUpd = document.createElement('A');
     linkButUpd.href = '#';
-    linkButUpd.classList.add('mylink');
+    linkButUpd.classList.add('btnTaskUpd');
+    linkButUpd.setAttribute('id' , 'btnTaskUpd');
     linkButUpd.textContent = 'Обновить';
     linkButUpd.title = "Обновить данные данного задания";
     linkButUpd.onclick = function(){
@@ -47,9 +49,24 @@ if(elementPage){
         //console.log(treeAid, treeAc);
         //updateStudentsView(treeAid, treeAc, null, null, null, null, !0, !0);
         updateStudentsView(null, null, null, 100);
+        return false;
     };
     linkButUpd.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     block.insertBefore(linkButUpd, block.children[0]);
+
+
+    /*Создаём и вставляем ссылку-кнопку Проверить*/
+    var btnTask = document.querySelector('.folder-header');
+    //Кнопка Посчитать
+    var linkButTask = document.createElement('A');
+    linkButTask.href = '#';
+    linkButTask.classList.add('btnTaskSearch');
+    linkButTask.setAttribute('id' , 'btnTaskSearch');
+    linkButTask.textContent = 'Проверить';
+    linkButTask.title = "Проверить где есть присланные новые или непросмотренные работы";
+    linkButTask.onclick = ShowId;
+    linkButTask.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+    btnTask.prepend(linkButTask);
 }
 
 /*Полоса меню полного отчёта*/
@@ -250,4 +267,93 @@ function countLog () {
         sum = sum + parseInt(linkTexts[i]);
     }
     document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = "Учёток: <b>" + CountDiv + "</b>  |  Всего отправлено: <b>"+ sum +"</b>";
+    return false;
+}
+
+/*Функция получения данных по id курса и задания*/
+async function get(idT, idC) {
+    let url = window.location.protocol + "//"+window.location.host+"/api/teacher/worksInTask?taskId="+idT+"&courseId="+idC+"&by=20&page=1&order=desc&orderBy=date&word=&grade=&updateGrades=true";
+    //Получение данных из url
+    let obj = await (await fetch(url, {
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+            }
+        })).json();
+    var countNew = 0;
+    var countNotReview = 0;
+    var totalCount = "";
+    //Смотрим статусы последних документов
+    for (var i = 0; i < obj["Rows"].length; i++){
+        //Новый (отправленный)
+        if (obj["Rows"][i].Work.Status == "Postponed") {
+            countNew = countNew + 1;
+        }
+        //Непросмотренный
+        if (obj["Rows"][i].Work.Status == "NotReviewed") {
+            countNotReview = countNotReview + 1;
+        }
+    }
+    //Если нечего проверять
+    if (countNew == 0 && countNotReview == 0) {
+        totalCount = "&nbsp;";
+    }
+    //Если есть новые и непросмотренные
+    if (countNew > 0 && countNotReview > 0) {
+        totalCount = countNew + countNotReview;
+    }
+    //Если новых нет, но есть непросмотренные
+    if (countNew == 0 && countNotReview > 0) {
+        totalCount = countNotReview;
+    }
+    //Если есть новые и нет непросмотренных
+    if (countNew > 0 && countNotReview == 0) {
+        totalCount = countNew;
+    }
+    return totalCount;
+}
+
+/*Функция по выводу количества присланных работ*/
+function ShowId(){
+    (async () => {
+        //У кнопки Проверить меняем атрибуты на момент работы
+        var btnTS = document.querySelector('a.btnTaskSearch');
+        btnTS.setAttribute("style", "display: block;background-color: white;border: 1px solid #ff0000;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;pointer-events: none;cursor: default;");
+        //Определяем активную вкладку Курсы
+        var tabList0 = Array.from(document.querySelectorAll('[aria-hidden="false"] > div.folder-list > div.other-folders > ul > li.level-0'));
+        //Разбираем каждый уровень - 0
+        for (var i = 0; i < tabList0.length; i++) {
+            //Получаем ID курса
+            var idlvl0 = tabList0[i].querySelector('div.tree-element').getAttribute("data-id");
+            //Находим все задания
+            var tabList1 = Array.from(tabList0[i].querySelectorAll('ul > li.level-1'));
+            //Разбираем каждый уровень - 1
+            for (var j = 0; j < tabList1.length; j++) {
+                //Получаем ID задания
+                var idlvl1 = tabList1[j].querySelector('div.tree-element').getAttribute("data-id");
+                var taskJob;
+                taskJob =  await get(idlvl1, idlvl0);
+                //Проверяем на наличие дива с таким ID
+                var divById =  document.getElementById(idlvl1);
+                //Проверяем на наличие div с такими ID
+                if (typeof(divById) != 'undefined' && divById != null)
+                {
+                    //Если есть, то обновляем содержимое
+                    divById.innerHTML = taskJob;
+                } else {
+                    //Если нет, то создаём DIV и вставляем содержимое
+                    var actTask = document.querySelector('[data-id="' + idlvl1 + '"][data-courseid="' + idlvl0 + '"]');
+                    var countDiv = document.createElement('DIV');
+                    countDiv.setAttribute('id' , idlvl1);
+                    countDiv.setAttribute("style", "text-decoration: none;color: #ff0000;font-weight: 700;text-transform: uppercase;font-size: 10px;float: left;");
+                    countDiv.innerHTML = taskJob;
+                    actTask.prepend(countDiv);
+                }
+            }
+        }
+        //Возвращаем атрибуты после работы
+        btnTS.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+        //console.log('Проверка завершена!');
+    })()
+    return false;
 }

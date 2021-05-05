@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-05-05
-// @version      0.5.4
+// @date         2021-05-06
+// @version      0.5.5
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -30,7 +30,7 @@ if(elementPage){
     linkBut.setAttribute('id' , 'btnCountWork');
     linkBut.textContent = 'Посчитать';
     linkBut.title = "Посчитать количество человек и количество попыток";
-    linkBut.onclick = countLog;
+    linkBut.onclick = CountJobAcc;
     linkBut.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     block.insertBefore(linkBut, block.children[0]);
 
@@ -353,7 +353,53 @@ function ShowId(){
         }
         //Возвращаем атрибуты после работы
         btnTS.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-        //console.log('Проверка завершена!');
+    })()
+    return false;
+}
+
+/*Функция получения данных по текущему id курса и задания*/
+async function getCurent(idT, idC) {
+    let url = window.location.protocol + "//"+window.location.host+"/api/teacher/worksInTask?taskId="+idT+"&courseId="+idC+"&by=100&page=1&order=desc&orderBy=date&word=&grade=&updateGrades=true";
+    //Получение данных из url
+    let obj = await (await fetch(url, {
+        headers : {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+            }
+        })).json();
+    var totalAccount = 0;
+    var totalJob = 0;
+    var totalInfo = "";
+    if (obj.Total > 0) {
+        //Если есть присланные работы
+        var numTotal = 0;
+        for (var i = 0; i < obj["Rows"].length; i++){
+            //Получаем количество отправленных работ
+            numTotal = numTotal + obj["Rows"][i].Work.AttemptNr;
+        }
+        totalJob = numTotal;
+    }
+    totalAccount = obj["Rows"].length;
+    totalInfo = "Учёток: <b>" + totalAccount + "</b>  |  Всего отправлено: <b>"+ totalJob +"</b>";
+    return totalInfo;
+}
+
+/*Функция по выводу количества присланных работ*/
+function CountJobAcc(){
+    (async () => {
+        //У кнопки Посчитать меняем атрибуты на момент работы
+        var btnCn = document.querySelector('a.btnCountWork');
+        btnCn.setAttribute("style", "display: block;border: 1px solid #ff0000;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;pointer-events: none;cursor: default;");
+        //Определяем активное задание и курс
+        var actCT = document.querySelector('[aria-hidden="false"] > div.folder-list > div.other-folders > ul > li.level-0 > ul >  li.level-1 > div.tree-element.tree-element-active');
+        var aCur = actCT.getAttribute("data-courseid");
+        var aTask = actCT.getAttribute("data-id");
+        var aCT;
+        aCT = await getCurent(aTask, aCur);
+        document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = aCT;
+
+        //Возвращаем атрибуты после работы
+        btnCn.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     })()
     return false;
 }

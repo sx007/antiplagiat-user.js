@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-05-06
-// @version      0.5.6.2
+// @date         2021-05-07
+// @version      0.5.7
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -58,7 +58,7 @@ if(elementPage){
     linkButTask.setAttribute('id' , 'btnTaskSearch');
     linkButTask.textContent = 'Проверить';
     linkButTask.title = "Проверить где есть присланные новые или непросмотренные работы";
-    linkButTask.onclick = ShowId;
+    linkButTask.onclick = ShowNewJob;
     linkButTask.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     btnTask.prepend(linkButTask);
 }
@@ -94,7 +94,6 @@ if(listRabot){
     var nowStyleLoad = document.querySelector('div.loading');
     /*Переменная по отслеживанию стиля в loading*/
     var styleLoad = '';
-
     /*Функция по созданию дополнительных кнопок*/
     function createBut(){
         var tableSt = Array.from(document.querySelectorAll('tr.student'));
@@ -103,7 +102,6 @@ if(listRabot){
             //Блок Отчётов / результатов
             var block = tableSt[i].querySelector('div.report');
             /*Создаем ссылку на копирование адреса почты*/
-
             //Проверяем блок с ФИО на наличие ссылки, где есть эл.почта
             var blockMail = "";
             if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
@@ -216,7 +214,6 @@ if(listRabot){
     const config = { attributes: true };
     // Вызываем функцию когда происходят изменения
     const callback = function(observer) {
-        //console.log('Изменено');
         /*Смотрим на атрибуты Style*/
         if (nowStyleLoad.style.display == 'block'){
             styleLoad = 'block';
@@ -265,7 +262,7 @@ function countLog () {
 }
 
 /*Функция получения данных по id курса и задания*/
-async function get(idT, idC) {
+async function getInfoByTask(idT, idC) {
     let url = window.location.protocol + "//"+window.location.host+"/api/teacher/worksInTask?taskId="+idT+"&courseId="+idC+"&by=20&page=1&order=desc&orderBy=date&word=&grade=&updateGrades=true";
     //Получение данных из url
     let obj = await (await fetch(url, {
@@ -274,41 +271,11 @@ async function get(idT, idC) {
             'Accept': 'application/json'
             }
         })).json();
-    var countNew = 0;
-    var countNotReview = 0;
-    var totalCount = "";
-    //Смотрим статусы последних документов
-    for (var i = 0; i < obj.Rows.length; i++){
-        //Новый (отправленный)
-        if (obj.Rows[i].Work.Status == "Postponed") {
-            countNew = countNew + 1;
-        }
-        //Непросмотренный
-        if (obj.Rows[i].Work.Status == "NotReviewed") {
-            countNotReview = countNotReview + 1;
-        }
-    }
-    //Если нечего проверять
-    if (countNew == 0 && countNotReview == 0) {
-        totalCount = "&nbsp;";
-    }
-    //Если есть новые и непросмотренные
-    if (countNew > 0 && countNotReview > 0) {
-        totalCount = countNew + countNotReview;
-    }
-    //Если новых нет, но есть непросмотренные
-    if (countNew == 0 && countNotReview > 0) {
-        totalCount = countNotReview;
-    }
-    //Если есть новые и нет непросмотренных
-    if (countNew > 0 && countNotReview == 0) {
-        totalCount = countNew;
-    }
-    return totalCount;
+    return obj;
 }
 
 /*Функция по выводу количества присланных работ*/
-function ShowId(){
+function ShowNewJob(){
     (async () => {
         //У кнопки Проверить меняем атрибуты на момент работы
         var btnTS = document.querySelector('a.btnTaskSearch');
@@ -326,21 +293,54 @@ function ShowId(){
                 //Получаем ID задания
                 var idlvl1 = tabList1[j].querySelector('div.tree-element').getAttribute("data-id");
                 var taskJob;
-                taskJob =  await get(idlvl1, idlvl0);
+                //Получаем JSON задания
+                taskJob =  await getInfoByTask(idlvl1, idlvl0);
+                //Переменные для вывода
+                var countNew = 0;
+                var countNotReview = 0;
+                var totalCount = "";
+                //Перебор
+                for (var k = 0; k < taskJob.Rows.length; k++){
+                    //Новый (отправленный)
+                    if (taskJob.Rows[k].Work.Status == "Postponed") {
+                        countNew = countNew + 1;
+                    }
+                    //Непросмотренный
+                    if (taskJob.Rows[k].Work.Status == "NotReviewed") {
+                        countNotReview = countNotReview + 1;
+                    }
+                }
+                //Если нечего проверять
+                if (countNew == 0 && countNotReview == 0) {
+                    totalCount = "&nbsp;";
+                }
+                //Если есть новые и непросмотренные
+                if (countNew > 0 && countNotReview > 0) {
+                    totalCount = countNew + countNotReview;
+                }
+                //Если новых нет, но есть непросмотренные
+                if (countNew == 0 && countNotReview > 0) {
+                    totalCount = countNotReview;
+                }
+                //Если есть новые и нет непросмотренных
+                if (countNew > 0 && countNotReview == 0) {
+                    totalCount = countNew;
+                }
+
                 //Проверяем на наличие дива с таким ID
                 var divById =  document.getElementById(idlvl1);
                 //Проверяем на наличие div с такими ID
                 if (typeof(divById) != 'undefined' && divById != null)
                 {
                     //Если есть, то обновляем содержимое
-                    divById.innerHTML = taskJob;
+                    divById.innerHTML = totalCount;
                 } else {
                     //Если нет, то создаём DIV и вставляем содержимое
                     var actTask = document.querySelector('[data-id="' + idlvl1 + '"][data-courseid="' + idlvl0 + '"]');
                     var countDiv = document.createElement('DIV');
                     countDiv.setAttribute('id' , idlvl1);
                     countDiv.setAttribute("style", "text-decoration: none;color: #ff0000;font-weight: 700;text-transform: uppercase;font-size: 10px;float: left;");
-                    countDiv.innerHTML = taskJob;
+                    countDiv.innerHTML = totalCount;
                     actTask.prepend(countDiv);
                 }
             }
@@ -361,21 +361,7 @@ async function getCurent(idT, idC) {
             'Accept': 'application/json'
             }
         })).json();
-    var totalAccount = 0;
-    var totalJob = 0;
-    var totalInfo = "";
-    if (obj.Total > 0) {
-        //Если есть присланные работы
-        var numTotal = 0;
-        for (var i = 0; i < obj.Rows.length; i++){
-            //Получаем количество отправленных работ
-            numTotal = numTotal + obj.Rows[i].Work.AttemptNr;
-        }
-        totalJob = numTotal;
-    }
-    totalAccount = obj.Rows.length;
-    totalInfo = "Учёток: <b>" + totalAccount + "</b>  |  Всего отправлено: <b>"+ totalJob +"</b>";
-    return totalInfo;
+    return obj;
 }
 
 /*Функция по выводу количества присланных работ*/
@@ -391,7 +377,22 @@ function CountJobAcc(){
         var aCT;
         //Получаем данные
         aCT = await getCurent(aTask, aCur);
-        document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = aCT;
+        var totalAccount = 0;
+        var totalJob = 0;
+        var totalInfo = "";
+        if (aCT.Total > 0) {
+            //Если есть присланные работы
+            var numTotal = 0;
+            for (var i = 0; i < aCT.Rows.length; i++){
+                //Получаем количество отправленных работ
+                numTotal = numTotal + aCT.Rows[i].Work.AttemptNr;
+            }
+            totalJob = numTotal;
+        }
+        totalAccount = aCT.Rows.length;
+        totalInfo = "Учёток: <b>" + totalAccount + "</b>  |  Всего отправлено: <b>"+ totalJob +"</b>";
+        //Вносим содержимое в див
+        document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = totalInfo;
         //Возвращаем атрибуты после работы
         btnCn.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     })()

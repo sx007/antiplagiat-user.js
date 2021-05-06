@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-05-06
-// @version      0.5.5
+// @version      0.5.6
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -284,13 +284,13 @@ async function get(idT, idC) {
     var countNotReview = 0;
     var totalCount = "";
     //Смотрим статусы последних документов
-    for (var i = 0; i < obj["Rows"].length; i++){
+    for (var i = 0; i < obj.Rows.length; i++){
         //Новый (отправленный)
-        if (obj["Rows"][i].Work.Status == "Postponed") {
+        if (obj.Rows[i].Work.Status == "Postponed") {
             countNew = countNew + 1;
         }
         //Непросмотренный
-        if (obj["Rows"][i].Work.Status == "NotReviewed") {
+        if (obj.Rows[i].Work.Status == "NotReviewed") {
             countNotReview = countNotReview + 1;
         }
     }
@@ -373,13 +373,13 @@ async function getCurent(idT, idC) {
     if (obj.Total > 0) {
         //Если есть присланные работы
         var numTotal = 0;
-        for (var i = 0; i < obj["Rows"].length; i++){
+        for (var i = 0; i < obj.Rows.length; i++){
             //Получаем количество отправленных работ
-            numTotal = numTotal + obj["Rows"][i].Work.AttemptNr;
+            numTotal = numTotal + obj.Rows.[i].Work.AttemptNr;
         }
         totalJob = numTotal;
     }
-    totalAccount = obj["Rows"].length;
+    totalAccount = obj.Rows.length;
     totalInfo = "Учёток: <b>" + totalAccount + "</b>  |  Всего отправлено: <b>"+ totalJob +"</b>";
     return totalInfo;
 }

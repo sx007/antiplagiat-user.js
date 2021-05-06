@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-05-06
-// @version      0.5.6.1
+// @version      0.5.6
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -395,9 +395,9 @@ function CountJobAcc(){
         var aCur = actCT.getAttribute("data-courseid");
         var aTask = actCT.getAttribute("data-id");
         var aCT;
+        //Получаем данные
         aCT = await getCurent(aTask, aCur);
         document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = aCT;
-
         //Возвращаем атрибуты после работы
         btnCn.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     })()

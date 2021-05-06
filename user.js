@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-05-06
-// @version      0.5.6
+// @version      0.5.6.2
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -42,12 +42,6 @@ if(elementPage){
     linkButUpd.textContent = 'Обновить';
     linkButUpd.title = "Обновить данные данного задания";
     linkButUpd.onclick = function(){
-        //Получаем ID задания и курса
-        //var tree = document.querySelector('div.tree-element-active');
-        //var treeAid = tree.getAttribute("data-id");
-        //var treeAc = tree.getAttribute("data-courseid");
-        //console.log(treeAid, treeAc);
-        //updateStudentsView(treeAid, treeAc, null, null, null, null, !0, !0);
         updateStudentsView(null, null, null, 100);
         return false;
     };

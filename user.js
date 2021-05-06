@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-05-06
-// @version      0.5.6
+// @version      0.5.6.1
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -375,7 +375,7 @@ async function getCurent(idT, idC) {
         var numTotal = 0;
         for (var i = 0; i < obj.Rows.length; i++){
             //Получаем количество отправленных работ
-            numTotal = numTotal + obj.Rows.[i].Work.AttemptNr;
+            numTotal = numTotal + obj.Rows[i].Work.AttemptNr;
         }
         totalJob = numTotal;
     }

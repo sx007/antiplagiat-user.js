@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-05-07
-// @version      0.5.7
+// @date         2021-05-17
+// @version      0.5.8
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -99,6 +99,8 @@ if(listRabot){
         var tableSt = Array.from(document.querySelectorAll('tr.student'));
         /*Разбираем каждую строку таблицы (элемент массива)*/
         for (var i = 0; i < tableSt.length; i++) {
+            var chbx = tableSt[i].querySelector('input[name=selectedCheckBoxes]');
+            chbx.addEventListener('click', showCountChecked);
             //Блок Отчётов / результатов
             var block = tableSt[i].querySelector('div.report');
             /*Создаем ссылку на копирование адреса почты*/
@@ -224,7 +226,10 @@ if(listRabot){
         /*Если выставлено None, тогда вызываем функцию создания кнопок*/
         if(styleLoad == 'none'){
             //console.log('Обновились без перезагрузки');
+            //Если обновился контент без перезагрузки
             createBut();
+            //Сброс подсчёта чекбоксов
+            showCountChecked();
         }
     };
     // Создаем экземпляр наблюдения, связанный с функцией обратного вызова
@@ -398,3 +403,17 @@ function CountJobAcc(){
     })()
     return false;
 }
+/* Подсчёт количества чекбоксов */
+showCountChecked();
+function showCountChecked(){
+    var allCh = document.querySelector('label[for="check-all"]');
+    var countCh = document.querySelectorAll('input[name=selectedCheckBoxes]:checked').length;
+    allCh.setAttribute("title", "Выбрано: " + countCh);
+}
+/*
+document.querySelectorAll('input[name=selectedCheckBoxes]').forEach(i=>{
+    i.onclick = function(){
+        showCountChecked();
+    }
+});
+*/

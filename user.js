@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-05-17
-// @version      0.5.8
+// @date         2021-05-31
+// @version      0.5.9
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -303,6 +303,7 @@ function ShowNewJob(){
                 //Переменные для вывода
                 var countNew = 0;
                 var countNotReview = 0;
+                var countChecking = 0;
                 var totalCount = "";
                 //Перебор
                 for (var k = 0; k < taskJob.Rows.length; k++){
@@ -314,22 +315,22 @@ function ShowNewJob(){
                     if (taskJob.Rows[k].Work.Status == "NotReviewed") {
                         countNotReview = countNotReview + 1;
                     }
+                    //Проверяемых
+                    if (taskJob.Rows[k].Work.Status == "Checking") {
+                        countChecking = countChecking + 1;
+                    }
                 }
                 //Если нечего проверять
-                if (countNew == 0 && countNotReview == 0) {
+                if (countNew == 0 && countNotReview == 0 && countChecking == 0) {
                     totalCount = "&nbsp;";
                 }
-                //Если есть новые и непросмотренные
-                if (countNew > 0 && countNotReview > 0) {
-                    totalCount = countNew + countNotReview;
+                //Если есть новые, непросмотренные, непроверенные
+                if (countNew > 0 && countNotReview > 0 && countChecking > 0) {
+                    totalCount = countNew + countNotReview + countChecking;
                 }
-                //Если новых нет, но есть непросмотренные
-                if (countNew == 0 && countNotReview > 0) {
-                    totalCount = countNotReview;
-                }
-                //Если есть новые и нет непросмотренных
-                if (countNew > 0 && countNotReview == 0) {
-                    totalCount = countNew;
+                //Если что-то есть
+                if (countNew > 0 || countNotReview > 0 || countChecking > 0) {
+                    totalCount = countNew + countNotReview + countChecking;
                 }
 
                 //Проверяем на наличие дива с таким ID

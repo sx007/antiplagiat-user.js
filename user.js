@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-05-31
-// @version      0.5.9
+// @date         2021-06-02
+// @version      0.5.9.1
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -296,6 +296,7 @@ function ShowNewJob(){
             //Разбираем каждый уровень - 1
             for (var j = 0; j < tabList1.length; j++) {
                 //Получаем ID задания
+                tabList1[j].setAttribute("style", "border: 1px dotted #ff0000;");
                 var idlvl1 = tabList1[j].querySelector('div.tree-element').getAttribute("data-id");
                 var taskJob;
                 //Получаем JSON задания
@@ -349,6 +350,7 @@ function ShowNewJob(){
                     countDiv.innerHTML = totalCount;
                     actTask.prepend(countDiv);
                 }
+                tabList1[j].removeAttribute("style");
             }
         }
         //Возвращаем атрибуты после работы

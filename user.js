@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-06-02
-// @version      0.5.9.1
+// @date         2021-06-08
+// @version      0.5.9.2
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -40,7 +40,7 @@ if(elementPage){
     linkButUpd.classList.add('btnTaskUpd');
     linkButUpd.setAttribute('id' , 'btnTaskUpd');
     linkButUpd.textContent = 'Обновить';
-    linkButUpd.title = "Обновить данные данного задания";
+    linkButUpd.title = "Обновить информацию данного задания";
     linkButUpd.onclick = function(){
         updateStudentsView(null, null, null, 100);
         return false;
@@ -189,7 +189,7 @@ if(listRabot){
 
             /*Создаем ссылку на полный отчёт*/
             var linkRep = document.createElement('A');
-            linkRep.href = '/report/full/'+elementPage+'?v=1';
+            linkRep.href = '/report/full/'+elementPage+'?v=1&page=1&showAll=true';
             linkRep.textContent = 'Отчёт';
             linkRep.title = "Ссылка на полный отчёт";
             linkRep.target = '_blank';
@@ -413,10 +413,3 @@ function showCountChecked(){
     var countCh = document.querySelectorAll('input[name=selectedCheckBoxes]:checked').length;
     allCh.setAttribute("title", "Выбрано: " + countCh);
 }
-/*
-document.querySelectorAll('input[name=selectedCheckBoxes]').forEach(i=>{
-    i.onclick = function(){
-        showCountChecked();
-    }
-});
-*/

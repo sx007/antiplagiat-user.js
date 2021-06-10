@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-06-08
-// @version      0.5.9.2
+// @date         2021-06-10
+// @version      0.5.9.3
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -305,6 +305,7 @@ function ShowNewJob(){
                 var countNew = 0;
                 var countNotReview = 0;
                 var countChecking = 0;
+                var allJobs = 0;
                 var totalCount = "";
                 //Перебор
                 for (var k = 0; k < taskJob.Rows.length; k++){
@@ -320,18 +321,35 @@ function ShowNewJob(){
                     if (taskJob.Rows[k].Work.Status == "Checking") {
                         countChecking = countChecking + 1;
                     }
+                    //Добавляем количество работ всего
+                    allJobs = allJobs + taskJob.Rows[k].Work.AttemptNr;
                 }
+                //Создаем два DIVа - Новых работ и всего присланных
+                var newCountDiv = document.createElement('DIV');
+                var totalCountDiv = document.createElement('DIV');
                 //Если нечего проверять
                 if (countNew == 0 && countNotReview == 0 && countChecking == 0) {
-                    totalCount = "&nbsp;";
+                    //Если работ нет, то пишем 0
+                    newCountDiv.setAttribute("style", "color: #000000;float: left;");
+                    newCountDiv.innerHTML = "0";
+                    totalCountDiv.setAttribute("style", "color: #000000;float: left;");
+                    totalCountDiv.innerHTML = "/" + allJobs;
                 }
                 //Если есть новые, непросмотренные, непроверенные
                 if (countNew > 0 && countNotReview > 0 && countChecking > 0) {
-                    totalCount = countNew + countNotReview + countChecking;
+                    //Если есть работы, то суммируем
+                    newCountDiv.setAttribute("style", "color: #ff0000;float: left;");
+                    newCountDiv.innerHTML = countNew + countNotReview + countChecking;
+                    totalCountDiv.setAttribute("style", "color: #000000;float: left;");
+                    totalCountDiv.innerHTML = "/" + allJobs;
                 }
                 //Если что-то есть
                 if (countNew > 0 || countNotReview > 0 || countChecking > 0) {
-                    totalCount = countNew + countNotReview + countChecking;
+                    //Если есть работы, то суммируем
+                    newCountDiv.setAttribute("style", "color: #ff0000;float: left;");
+                    newCountDiv.innerHTML = countNew + countNotReview + countChecking;
+                    totalCountDiv.setAttribute("style", "color: #000000;float: left;");
+                    totalCountDiv.innerHTML = "/" + allJobs;
                 }
 
                 //Проверяем на наличие дива с таким ID
@@ -340,14 +358,20 @@ function ShowNewJob(){
                 if (typeof(divById) != 'undefined' && divById != null)
                 {
                     //Если есть, то обновляем содержимое
-                    divById.innerHTML = totalCount;
+                    //Очищаем содержимое
+                    divById.innerHTML = "";
+                    //Добавляем два DIVа
+                    divById.prepend(totalCountDiv);
+                    divById.prepend(newCountDiv);
                 } else {
                     //Если нет, то создаём DIV и вставляем содержимое
                     var actTask = document.querySelector('[data-id="' + idlvl1 + '"][data-courseid="' + idlvl0 + '"]');
                     var countDiv = document.createElement('DIV');
                     countDiv.setAttribute('id' , idlvl1);
-                    countDiv.setAttribute("style", "text-decoration: none;color: #ff0000;font-weight: 700;text-transform: uppercase;font-size: 10px;float: left;");
-                    countDiv.innerHTML = totalCount;
+                    countDiv.setAttribute("style", "text-decoration: none;font-weight: 700;text-transform: uppercase;font-size: 10px;width: 30px;text-align: center;display: inline-block;float: left;");
+                    //Добавляем два DIVа
+                    countDiv.prepend(totalCountDiv);
+                    countDiv.prepend(newCountDiv);
                     actTask.prepend(countDiv);
                 }
                 tabList1[j].removeAttribute("style");

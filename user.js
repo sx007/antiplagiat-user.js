@@ -268,7 +268,7 @@ function countLog () {
 
 /*Функция получения данных по id курса и задания*/
 async function getInfoByTask(idT, idC) {
-    let url = window.location.protocol + "//"+window.location.host+"/api/teacher/worksInTask?taskId="+idT+"&courseId="+idC+"&by=20&page=1&order=desc&orderBy=date&word=&grade=&updateGrades=true";
+    let url = window.location.protocol + "//"+window.location.host+"/api/teacher/worksInTask?taskId="+idT+"&courseId="+idC+"&by=100&page=1&order=desc&orderBy=date&word=&grade=&updateGrades=true";
     //Получение данных из url
     let obj = await (await fetch(url, {
         headers : {
@@ -306,7 +306,6 @@ function ShowNewJob(){
                 var countNotReview = 0;
                 var countChecking = 0;
                 var allJobs = 0;
-                var totalCount = "";
                 //Перебор
                 for (var k = 0; k < taskJob.Rows.length; k++){
                     //Новый (отправленный)

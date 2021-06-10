@@ -3,7 +3,7 @@
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
 // @date         2021-06-10
-// @version      0.5.9.3.1
+// @version      0.5.9.4
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet

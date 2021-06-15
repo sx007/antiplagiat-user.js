@@ -2,8 +2,8 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-06-10
-// @version      0.5.9.4
+// @date         2021-06-15
+// @version      0.5.9.5
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
@@ -365,6 +365,9 @@ function ShowNewJob(){
                 } else {
                     //Если нет, то создаём DIV и вставляем содержимое
                     var actTask = document.querySelector('[data-id="' + idlvl1 + '"][data-courseid="' + idlvl0 + '"]');
+                    var actTaskI = document.querySelector('[data-id="' + idlvl1 + '"][data-courseid="' + idlvl0 + '"] > i');
+                    //Удаляем элемент i
+                    actTaskI.parentNode.removeChild(actTaskI);
                     var countDiv = document.createElement('DIV');
                     countDiv.setAttribute('id' , idlvl1);
                     countDiv.setAttribute("style", "text-decoration: none;font-weight: 700;text-transform: uppercase;font-size: 10px;width: 30px;text-align: center;display: inline-block;float: left;");

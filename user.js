@@ -2,12 +2,13 @@
 // @name         Count Antiplagiat
 // @namespace    dvgups.antiplagiat.ru
 // @homepage     https://github.com/sx007/antiplagiat-user.js
-// @date         2021-06-15
-// @version      0.5.9.5
+// @date         2021-07-19
+// @version      0.5.9.6
 // @description  Для упрощения работы проверяющиму
 // @author       sx007 (Хлибец Иван)
 // @match        https://*.antiplagiat.ru/teacherCabinet
 // @match        https://*.antiplagiat.ru/report/full/*
+// @match        https://*.antiplagiat.ru/report/export/*
 // @grant        GM_setClipboard
 // @updateURL    https://github.com/sx007/antiplagiat-user.js/raw/master/user.js
 // @downloadURL  https://github.com/sx007/antiplagiat-user.js/raw/master/user.js
@@ -63,7 +64,7 @@ if(elementPage){
     btnTask.prepend(linkButTask);
 }
 
-/*Полоса меню полного отчёта*/
+/*Оценить в полном отчёте*/
 var fullRepPage = document.querySelector('.main-inner');
 var gradeRep = document.querySelector('.report-grade');
 if(fullRepPage){
@@ -82,6 +83,41 @@ if(fullRepPage){
         gradeBut.onclick = grClick;
         gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
         titleDiv.insertBefore(gradeBut, titleDiv.children[0]);
+    }
+}
+
+/* Экспорт в PDF */
+var pdfRepPage = document.querySelector('.export-reports-list');
+if(pdfRepPage){
+    window.onload = function() {
+        // Конфигурация observer (за какими изменениями наблюдать)
+        const config = {
+            attributes: false,
+            childList: true,
+            subtree: true
+        };
+        //Кнопка Экспорт
+        var exportButton = pdfRepPage.querySelector('.export-make');
+        //Если она есть
+        if(exportButton){
+            //Нажимаем на кнопку
+            exportButton.click();
+        }
+        // Колбэк-функция при срабатывании мутации
+        const callback = function(observer) {
+            //Кнопка Скачать
+            var downloadButton = pdfRepPage.querySelector('.export-download');
+            //Если она есть
+            if(downloadButton){
+                //Нажимаем на кнопку и скачиваем pdf отчёт
+                downloadButton.click();
+            }
+        };
+        // Создаём экземпляр наблюдателя с указанной функцией колбэка
+        const observer = new MutationObserver(callback);
+        // Начинаем наблюдение за настроенными изменениями целевого элемента
+        observer.observe(pdfRepPage, config);
+        //observer.disconnect();
     }
 }
 
@@ -437,5 +473,7 @@ showCountChecked();
 function showCountChecked(){
     var allCh = document.querySelector('label[for="check-all"]');
     var countCh = document.querySelectorAll('input[name=selectedCheckBoxes]:checked').length;
-    allCh.setAttribute("title", "Выбрано: " + countCh);
+    if(allCh){
+        allCh.setAttribute("title", "Выбрано: " + countCh);
+    }
 }

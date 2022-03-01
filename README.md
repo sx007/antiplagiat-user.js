@@ -15,7 +15,7 @@
 
 Количество попыток: 
 
-<img src="https://i.imgur.com/vWn96sj.jpg" alt="Подсчитывает количество попыток" />
+<img src="https://i.imgur.com/c38QkRn.jpg" alt="Подсчитывает количество попыток" />
 
 # Дополнительные кнопки
 <img src="https://i.imgur.com/5vUfpa1.png" alt="Дополнительные кнопки" />

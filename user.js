@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       dvgups.antiplagiat.ru
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.5.9.7
+// @version         0.6
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -26,8 +26,14 @@ var listRabot = document.querySelector('.students-list');
 
 /*Если находимся в кабинете Преподавателя*/
 if(elementPage){
-    /*Создаём и вставляем ссылку-кнопку Посчитать*/
     var block = document.querySelector('.task-description');
+    //Создаём div для вывода подсчёта
+    var newDiv = document.createElement("div");
+    newDiv.innerHTML = "";
+    newDiv.classList.add('divCountWork');
+    newDiv.setAttribute("style", "display: block;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;text-transform: uppercase;font-size: 11px;float: left;");
+    block.insertBefore(newDiv, block.firstElementChild);
+    /*Создаём и вставляем ссылку-кнопку Посчитать*/
     //Кнопка Посчитать
     var linkBut = document.createElement('A');
     linkBut.href = '#';
@@ -36,8 +42,8 @@ if(elementPage){
     linkBut.textContent = 'Посчитать';
     linkBut.title = "Посчитать количество человек и количество попыток";
     linkBut.onclick = CountJobAcc;
-    linkBut.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-    block.insertBefore(linkBut, block.children[0]);
+    linkBut.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+    block.insertBefore(linkBut, block.firstElementChild);
 
     //Кнопка Обновить
     var linkButUpd = document.createElement('A');
@@ -51,7 +57,7 @@ if(elementPage){
         return false;
     };
     linkButUpd.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-    block.insertBefore(linkButUpd, block.children[0]);
+    block.insertBefore(linkButUpd, block.firstElementChild);
 
 
     /*Создаём и вставляем ссылку-кнопку Проверить*/
@@ -86,7 +92,7 @@ if(fullRepPage){
         gradeBut.title = "Вызывает окно оценки работы";
         gradeBut.onclick = grClick;
         gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-        titleDiv.insertBefore(gradeBut, titleDiv.children[0]);
+        titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
     }
 }
 
@@ -443,7 +449,7 @@ function CountJobAcc(){
     (async () => {
         //У кнопки Посчитать меняем атрибуты на момент работы
         var btnCn = document.querySelector('a.btnCountWork');
-        btnCn.setAttribute("style", "display: block;border: 1px solid #ff0000;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;pointer-events: none;cursor: default;");
+        btnCn.setAttribute("style", "display: block;border: 1px solid #ff0000;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;pointer-events: none;cursor: default;");
         //Определяем активное задание и курс
         var actCT = document.querySelector('[aria-hidden="false"] > div.folder-list > div.other-folders > ul > li.level-0 > ul >  li.level-1 > div.tree-element.tree-element-active');
         var aCur = actCT.getAttribute("data-courseid");
@@ -466,9 +472,9 @@ function CountJobAcc(){
         totalAccount = aCT.Rows.length;
         totalInfo = "Учёток: <b>" + totalAccount + "</b>  |  Всего отправлено: <b>"+ totalJob +"</b>";
         //Вносим содержимое в див
-        document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = totalInfo;
+        document.getElementsByClassName("divCountWork")[0].innerHTML = totalInfo;
         //Возвращаем атрибуты после работы
-        btnCn.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 15px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+        btnCn.setAttribute("style", "display: block;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-top: 7px;margin-right: 5px;margin-bottom: 10px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     })()
     return false;
 }

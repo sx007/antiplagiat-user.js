@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            Assistant for working on the Antiplagiat website
 // @name:ru         Помощник для работы на сайте Antiplagiat
-// @namespace       dvgups.antiplagiat.ru
+// @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6
+// @version         0.6.1
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -113,6 +113,10 @@ if(pdfRepPage){
             //Нажимаем на кнопку
             exportButton.click();
         }
+        //Функция закрытия окна с экспортом
+        function closeWindowExport() {
+            window.close();
+        }
         // Колбэк-функция при срабатывании мутации
         const callback = function(observer) {
             //Кнопка Скачать
@@ -121,13 +125,13 @@ if(pdfRepPage){
             if(downloadButton){
                 //Нажимаем на кнопку и скачиваем pdf отчёт
                 downloadButton.click();
+                setTimeout(closeWindowExport, 5000);
             }
         };
         // Создаём экземпляр наблюдателя с указанной функцией колбэка
         const observer = new MutationObserver(callback);
         // Начинаем наблюдение за настроенными изменениями целевого элемента
         observer.observe(pdfRepPage, config);
-        //observer.disconnect();
     }
 }
 
@@ -271,7 +275,6 @@ if(listRabot){
         }
         /*Если выставлено None, тогда вызываем функцию создания кнопок*/
         if(styleLoad == 'none'){
-            //console.log('Обновились без перезагрузки');
             //Если обновился контент без перезагрузки
             createBut();
             //Сброс подсчёта чекбоксов

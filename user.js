@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.1
+// @version         0.6.2
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -23,8 +23,9 @@
 var elementPage = document.querySelector('.task-description');
 /*Таблица со списком присланных работ*/
 var listRabot = document.querySelector('.students-list');
-
-/*Если находимся в кабинете Преподавателя*/
+/* ------------------------------------- */
+//Кабинет преподавателя
+/* ------------------------------------- */
 if(elementPage){
     var block = document.querySelector('.task-description');
     //Создаём div для вывода подсчёта
@@ -72,11 +73,167 @@ if(elementPage){
     linkButTask.onclick = ShowNewJob;
     linkButTask.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;margin-top: 15px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
     btnTask.prepend(linkButTask);
-}
 
-/*Оценить в полном отчёте*/
+    /*Если находимся в кабинете Преподавателя и есть список работ*/
+    /*то добавляем дополнительные кнопки*/
+    if(listRabot){
+        /*Таблица со списком присланных работ*/
+        var needLook = document.querySelector('div.scroll-area');
+        /*Заставка обновления данных*/
+        var nowStyleLoad = document.querySelector('div.loading');
+        /*Переменная по отслеживанию стиля в loading*/
+        var styleLoad = '';
+        /*Функция по созданию дополнительных кнопок*/
+        function createBut(){
+            var tableSt = Array.from(document.querySelectorAll('tr.student'));
+            /*Разбираем каждую строку таблицы (элемент массива)*/
+            for (var i = 0; i < tableSt.length; i++) {
+                var chbx = tableSt[i].querySelector('input[name=selectedCheckBoxes]');
+                chbx.addEventListener('click', showCountChecked);
+                //Блок Отчётов / результатов
+                var block = tableSt[i].querySelector('div.report');
+                /*Создаем ссылку на копирование адреса почты*/
+                //Проверяем блок с ФИО на наличие ссылки, где есть эл.почта
+                var blockMail = "";
+                if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                    blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                } else {
+                    blockMail = null;
+                }
+
+                var linkMail = document.createElement('A');
+                linkMail.textContent = '@';
+                linkMail.href = '#';
+                linkMail.title = "Скопировать адрес эл.почты";
+                linkMail.setAttribute('id' , blockMail);
+                //Находим индекс и по нему получаем адрес эл.почты
+                linkMail.addEventListener('click', (function(i) {
+                    return function() {
+                        //Проверяем, есть ли адрес эл.почты
+                        var eMail = "";
+                        var infoMail = "";
+                        if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                            eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                        } else {
+                            eMail = null;
+                        }
+                        //Добавляем содержимое для буфера обмена
+                        if (eMail != null) {
+                            var tableStu = Array.from(document.querySelectorAll('tr.student'));
+                            infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
+                        } else {
+                            infoMail = "";
+                        }
+                        //Копируем в буфер обмена
+                        GM_setClipboard(infoMail,"text");
+                    }
+                })(i), false);
+
+                /*Создаем ссылку на копирование ФИО*/
+                var eMail = "";
+                if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                    eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                } else {
+                    eMail = null;
+                }
+                var linkFIO = document.createElement('A');
+                linkFIO.textContent = '👤';
+                linkFIO.href = '#';
+                linkFIO.title = "Скопировать ФИО";
+                linkFIO.setAttribute('id' , eMail);
+                //Находим индекс и по нему получаем адрес эл.почты
+                linkFIO.addEventListener('click', (function(i) {
+                    return function() {
+                        //Проверяем, есть ли адрес эл.почты
+                        var infoFIO = "";
+                        var infoEMail = "";
+                        if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
+                            infoEMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
+                        } else {
+                            infoEMail = null;
+                        }
+                        //Добавляем содержимое для буфера обмена
+                        if (infoEMail != null) {
+                            var tableStUs = Array.from(document.querySelectorAll('tr.student'));
+                            infoFIO = tableStUs[i].querySelector('div.name > a').innerHTML;
+                        } else {
+                            infoFIO = "";
+                        }
+                        //Копируем в буфер обмена
+                        GM_setClipboard(infoFIO,"text");
+                    }
+                })(i), false);
+
+                /*Создаем ссылку на PDF*/
+
+                /*Получаем в каждой строке таблицы значение data-docid*/
+                /*чтобы потом добавить кнопку на экспорт PDF*/
+                var elementPage = tableSt[i].getAttribute("data-docid");
+
+                var linkPdf = document.createElement('A');
+                linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False';
+                linkPdf.textContent = 'PDF';
+                linkPdf.title = "Ссылка на экспорт отчёта";
+                linkPdf.target = '_blank';
+
+                /*Создаем ссылку на полный отчёт*/
+                var linkRep = document.createElement('A');
+                linkRep.href = '/report/full/'+elementPage+'?v=1&page=1&showAll=true';
+                linkRep.textContent = 'Отчёт';
+                linkRep.title = "Ссылка на полный отчёт";
+                linkRep.target = '_blank';
+                //Проверяем есть ли div с результатами проверки
+                if(block != null){
+                    //Вставляем заготовленные кнопки перед Показать результаты
+                    block.children[0].innerHTML="Подробнее";
+                    block.children[0].target = "_blank";
+                    block.insertBefore(linkMail, block.children[0]);
+                    block.insertBefore(linkFIO, block.children[1]);
+                    block.insertBefore(linkPdf, block.children[2]);
+                    block.insertBefore(linkRep, block.children[3]);
+                }
+            }
+        }
+
+        /*При загрузке страницы / обновлении*/
+        /*создаем дополнительные кнопки*/
+        if (!nowStyleLoad.style.display){
+            createBut();
+        }
+
+        // Указываем настройки для observer
+        const config = { attributes: true };
+        // Вызываем функцию когда происходят изменения
+        const callback = function(observer) {
+            /*Смотрим на атрибуты Style*/
+            if (nowStyleLoad.style.display == 'block'){
+                styleLoad = 'block';
+            }
+            if (nowStyleLoad.style.display == 'none'){
+                styleLoad = 'none';
+            }
+            /*Если выставлено None, тогда вызываем функцию создания кнопок*/
+            if(styleLoad == 'none'){
+                //Если обновился контент без перезагрузки
+                createBut();
+                //Сброс подсчёта чекбоксов
+                showCountChecked();
+            }
+        };
+        // Создаем экземпляр наблюдения, связанный с функцией обратного вызова
+        const observer = new MutationObserver(callback);
+        // Начинает наблюдать за изменениями определенного блока
+        observer.observe(nowStyleLoad, config);
+    }
+}
+/* ------------------------------------- */
+//Полный отчёт
+/* ------------------------------------- */
 var fullRepPage = document.querySelector('.main-inner');
+//Оценить в полном отчёте
 var gradeRep = document.querySelector('.report-grade');
+//Окно вывода сообщения
+var gradeDialog = document.querySelector('#dialog-template');
 if(fullRepPage){
     //Проверяем наличие кнопки Оценить
     if(gradeRep){
@@ -94,9 +251,45 @@ if(fullRepPage){
         gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
         titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
     }
-}
 
-/* Экспорт в PDF */
+    //Следим за выставлением статуса работы
+    window.onload = function() {
+        // Конфигурация observer (за какими изменениями наблюдать)
+        const config = {
+            attributes: false,
+            childList: true,
+            subtree: true
+        };
+        //Функция закрытия окна с Отчётом
+        function closeWindowReport() {
+            window.close();
+        }
+        // Колбэк-функция при срабатывании мутации
+        const callback = function(observer) {
+            //Поле статуса
+            var gradeDialogAll = gradeDialog.querySelectorAll('p');
+            var gradeDialogP = gradeDialog.querySelector('p');
+            //Проверка наличия поля статуса
+            if(gradeDialog){
+                //Есть поле
+                if(gradeDialogAll.length > 0){
+                    //Если есть тэг P, то проверяем его содержимое
+                    if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
+                        //Через 5 секунд закрываем страницу
+                        setTimeout(closeWindowReport, 5000);
+                    }
+                }
+            }
+        };
+        // Создаём экземпляр наблюдателя с указанной функцией колбэка
+        const observer = new MutationObserver(callback);
+        // Начинаем наблюдение за настроенными изменениями целевого элемента
+        observer.observe(gradeDialog, config);
+    }
+}
+/* ------------------------------------- */
+//Экспорт в PDF
+/* ------------------------------------- */
 var pdfRepPage = document.querySelector('.export-reports-list');
 if(pdfRepPage){
     window.onload = function() {
@@ -108,10 +301,14 @@ if(pdfRepPage){
         };
         //Кнопка Экспорт
         var exportButton = pdfRepPage.querySelector('.export-make');
+        //Функция нажатия на кнопку Экспорт
+        function clickExport() {
+            exportButton.click();
+        }
         //Если она есть
         if(exportButton){
-            //Нажимаем на кнопку
-            exportButton.click();
+            //Ждём 2 секунды и нажимаем на кнопку
+            setTimeout(clickExport, 2000);
         }
         //Функция закрытия окна с экспортом
         function closeWindowExport() {
@@ -135,185 +332,6 @@ if(pdfRepPage){
     }
 }
 
-/*Если находимся в кабинете Преподавателя и есть список работ*/
-/*то добавляем дополнительные кнопки*/
-if(listRabot){
-    /*Таблица со списком присланных работ*/
-    var needLook = document.querySelector('div.scroll-area');
-    /*Заставка обновления данных*/
-    var nowStyleLoad = document.querySelector('div.loading');
-    /*Переменная по отслеживанию стиля в loading*/
-    var styleLoad = '';
-    /*Функция по созданию дополнительных кнопок*/
-    function createBut(){
-        var tableSt = Array.from(document.querySelectorAll('tr.student'));
-        /*Разбираем каждую строку таблицы (элемент массива)*/
-        for (var i = 0; i < tableSt.length; i++) {
-            var chbx = tableSt[i].querySelector('input[name=selectedCheckBoxes]');
-            chbx.addEventListener('click', showCountChecked);
-            //Блок Отчётов / результатов
-            var block = tableSt[i].querySelector('div.report');
-            /*Создаем ссылку на копирование адреса почты*/
-            //Проверяем блок с ФИО на наличие ссылки, где есть эл.почта
-            var blockMail = "";
-            if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
-                blockMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
-            } else {
-                blockMail = null;
-            }
-
-            var linkMail = document.createElement('A');
-            linkMail.textContent = '@';
-            linkMail.href = '#';
-            linkMail.title = "Скопировать адрес эл.почты";
-            linkMail.setAttribute('id' , blockMail);
-            //Находим индекс и по нему получаем адрес эл.почты
-            linkMail.addEventListener('click', (function(i) {
-                return function() {
-                    //Проверяем, есть ли адрес эл.почты
-                    var eMail = "";
-                    var infoMail = "";
-                    if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
-                        eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
-                    } else {
-                        eMail = null;
-                    }
-                    //Добавляем содержимое для буфера обмена
-                    if (eMail != null) {
-                        var tableStu = Array.from(document.querySelectorAll('tr.student'));
-                        infoMail = tableStu[i].querySelector('div.name > a').getAttribute("data-email");
-                    } else {
-                        infoMail = "";
-                    }
-                    //Копируем в буфер обмена
-                    GM_setClipboard(infoMail,"text");
-                }
-            })(i), false);
-
-            /*Создаем ссылку на копирование ФИО*/
-            var eMail = "";
-            if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
-                eMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
-            } else {
-                eMail = null;
-            }
-            var linkFIO = document.createElement('A');
-            linkFIO.textContent = '👤';
-            linkFIO.href = '#';
-            linkFIO.title = "Скопировать ФИО";
-            linkFIO.setAttribute('id' , eMail);
-            //Находим индекс и по нему получаем адрес эл.почты
-            linkFIO.addEventListener('click', (function(i) {
-                return function() {
-                    //Проверяем, есть ли адрес эл.почты
-                    var infoFIO = "";
-                    var infoEMail = "";
-                    if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
-                        infoEMail = tableSt[i].querySelector('div.name > a').getAttribute("data-email");
-                    } else {
-                        infoEMail = null;
-                    }
-                    //Добавляем содержимое для буфера обмена
-                    if (infoEMail != null) {
-                        var tableStUs = Array.from(document.querySelectorAll('tr.student'));
-                        infoFIO = tableStUs[i].querySelector('div.name > a').innerHTML;
-                    } else {
-                        infoFIO = "";
-                    }
-                    //Копируем в буфер обмена
-                    GM_setClipboard(infoFIO,"text");
-                }
-            })(i), false);
-
-            /*Создаем ссылку на PDF*/
-
-            /*Получаем в каждой строке таблицы значение data-docid*/
-            /*чтобы потом добавить кнопку на экспорт PDF*/
-            var elementPage = tableSt[i].getAttribute("data-docid");
-
-            var linkPdf = document.createElement('A');
-            linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False';
-            linkPdf.textContent = 'PDF';
-            linkPdf.title = "Ссылка на экспорт отчёта";
-            linkPdf.target = '_blank';
-
-            /*Создаем ссылку на полный отчёт*/
-            var linkRep = document.createElement('A');
-            linkRep.href = '/report/full/'+elementPage+'?v=1&page=1&showAll=true';
-            linkRep.textContent = 'Отчёт';
-            linkRep.title = "Ссылка на полный отчёт";
-            linkRep.target = '_blank';
-            //Проверяем есть ли div с результатами проверки
-            if(block != null){
-                //Вставляем заготовленные кнопки перед Показать результаты
-                block.children[0].innerHTML="Подробнее";
-                block.children[0].target = "_blank";
-                block.insertBefore(linkMail, block.children[0]);
-                block.insertBefore(linkFIO, block.children[1]);
-                block.insertBefore(linkPdf, block.children[2]);
-                block.insertBefore(linkRep, block.children[3]);
-            }
-        }
-    }
-
-    /*При загрузке страницы / обновлении*/
-    /*создаем дополнительные кнопки*/
-    if (!nowStyleLoad.style.display){
-        createBut();
-    }
-
-    // Указываем настройки для observer
-    const config = { attributes: true };
-    // Вызываем функцию когда происходят изменения
-    const callback = function(observer) {
-        /*Смотрим на атрибуты Style*/
-        if (nowStyleLoad.style.display == 'block'){
-            styleLoad = 'block';
-        }
-        if (nowStyleLoad.style.display == 'none'){
-            styleLoad = 'none';
-        }
-        /*Если выставлено None, тогда вызываем функцию создания кнопок*/
-        if(styleLoad == 'none'){
-            //Если обновился контент без перезагрузки
-            createBut();
-            //Сброс подсчёта чекбоксов
-            showCountChecked();
-        }
-    };
-    // Создаем экземпляр наблюдения, связанный с функцией обратного вызова
-    const observer = new MutationObserver(callback);
-    // Начинает наблюдать за изменениями определенного блока
-    observer.observe(nowStyleLoad, config);
-}
-
-
-/*Собираем содержимое ссылок*/
-function getText(link){
-    var text = "";
-    for (var i = 0; i < link.childNodes.length; i++){
-        var n = link.childNodes[i];
-        if (n && n.nodeValue){
-            text += n.nodeValue;
-        }
-    }
-    return text;
-}
-
-/*Функция подсчёта*/
-function countLog () {
-    /*Считаем сколько юзеров/строк*/
-    var CountDiv = document.querySelectorAll('.attempt').length;
-    /*Подсчитываем количество попыток*/
-    var linkTexts = Array.from(document.querySelectorAll('div.attempt > a'))
-                .map(getText);
-    var sum=0;
-    for(var i=0;i<linkTexts.length;i++){
-        sum = sum + parseInt(linkTexts[i]);
-    }
-    document.getElementsByClassName("breadcrumbs-inner")[0].innerHTML = "Учёток: <b>" + CountDiv + "</b>  |  Всего отправлено: <b>"+ sum +"</b>";
-    return false;
-}
 
 /*Функция получения данных по id курса и задания*/
 async function getInfoByTask(idT, idC) {
@@ -481,6 +499,7 @@ function CountJobAcc(){
     })()
     return false;
 }
+
 /* Подсчёт количества чекбоксов */
 showCountChecked();
 function showCountChecked(){

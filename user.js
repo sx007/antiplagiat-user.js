@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.2
+// @version         0.6.2.1
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -251,12 +251,13 @@ if(fullRepPage){
         gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
         titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
     }
-
+    let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+    if (MutationObserver) console.log('MutationObserver work - fullRepPage');
     //Следим за выставлением статуса работы
     window.onload = function() {
         // Конфигурация observer (за какими изменениями наблюдать)
         const config = {
-            attributes: false,
+            attributes: true,
             childList: true,
             subtree: true
         };
@@ -272,11 +273,21 @@ if(fullRepPage){
             //Проверка наличия поля статуса
             if(gradeDialog){
                 //Есть поле
-                if(gradeDialogAll.length > 0){
-                    //Если есть тэг P, то проверяем его содержимое
-                    if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
-                        //Через 5 секунд закрываем страницу
-                        setTimeout(closeWindowReport, 5000);
+                var DialogLen = gradeDialogAll.length;
+                if(DialogLen > 0){
+                    if(DialogLen > 1){
+                        //Если есть тэг P, то проверяем его содержимое
+                        var DialAll = document.querySelectorAll('#dialog-template')[DialogLen-1].querySelector('p');
+                        if (DialAll.textContent == "Отправлена на доработку" || DialAll.textContent == "Оценка сохранена"){
+                            //Через 5 секунд закрываем страницу
+                            setTimeout(closeWindowReport, 5000);
+                        }
+                    } else {
+                        //Если есть тэг P, то проверяем его содержимое
+                        if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
+                            //Через 5 секунд закрываем страницу
+                            setTimeout(closeWindowReport, 5000);
+                        }
                     }
                 }
             }
@@ -295,10 +306,12 @@ if(pdfRepPage){
     window.onload = function() {
         // Конфигурация observer (за какими изменениями наблюдать)
         const config = {
-            attributes: false,
+            attributes: true,
             childList: true,
             subtree: true
         };
+        let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+        if (MutationObserver) console.log('MutationObserver work - pdfRepPage');
         //Кнопка Экспорт
         var exportButton = pdfRepPage.querySelector('.export-make');
         //Функция нажатия на кнопку Экспорт
@@ -320,8 +333,10 @@ if(pdfRepPage){
             var downloadButton = pdfRepPage.querySelector('.export-download');
             //Если она есть
             if(downloadButton){
+                console.log('downloadButton - pdfRepPage');
                 //Нажимаем на кнопку и скачиваем pdf отчёт
                 downloadButton.click();
+                console.log('click - pdfRepPage');
                 setTimeout(closeWindowExport, 5000);
             }
         };

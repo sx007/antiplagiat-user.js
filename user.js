@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.2.1
+// @version         0.6.2.2
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -252,7 +252,7 @@ if(fullRepPage){
         titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
     }
     let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-    if (MutationObserver) console.log('MutationObserver work - fullRepPage');
+    //if (MutationObserver) console.log('MutationObserver work - fullRepPage');
     //Следим за выставлением статуса работы
     window.onload = function() {
         // Конфигурация observer (за какими изменениями наблюдать)
@@ -311,7 +311,7 @@ if(pdfRepPage){
             subtree: true
         };
         let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-        if (MutationObserver) console.log('MutationObserver work - pdfRepPage');
+        //if (MutationObserver) console.log('MutationObserver work - pdfRepPage');
         //Кнопка Экспорт
         var exportButton = pdfRepPage.querySelector('.export-make');
         //Функция нажатия на кнопку Экспорт

@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.2.2
+// @version         0.6.2.3
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -19,6 +19,8 @@
 // @copyright       2022, sx007 (Хлибец Иван)
 // ==/UserScript==
 
+//Обращение к MutationObserver в зависимости от браузера
+let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 /*Полоса с описанием задания над таблицей*/
 var elementPage = document.querySelector('.task-description');
 /*Таблица со списком присланных работ*/
@@ -88,8 +90,10 @@ if(elementPage){
             var tableSt = Array.from(document.querySelectorAll('tr.student'));
             /*Разбираем каждую строку таблицы (элемент массива)*/
             for (var i = 0; i < tableSt.length; i++) {
+                //Для подсчёта чекбоксов
                 var chbx = tableSt[i].querySelector('input[name=selectedCheckBoxes]');
                 chbx.addEventListener('click', showCountChecked);
+                //------------------------------------
                 //Блок Отчётов / результатов
                 var block = tableSt[i].querySelector('div.report');
                 /*Создаем ссылку на копирование адреса почты*/
@@ -100,7 +104,6 @@ if(elementPage){
                 } else {
                     blockMail = null;
                 }
-
                 var linkMail = document.createElement('A');
                 linkMail.textContent = '@';
                 linkMail.href = '#';
@@ -128,7 +131,7 @@ if(elementPage){
                         GM_setClipboard(infoMail,"text");
                     }
                 })(i), false);
-
+                //------------------------------------
                 /*Создаем ссылку на копирование ФИО*/
                 var eMail = "";
                 if(tableSt[i].querySelector('div.name').getElementsByTagName('a').length != 0){
@@ -163,19 +166,18 @@ if(elementPage){
                         GM_setClipboard(infoFIO,"text");
                     }
                 })(i), false);
-
-                /*Создаем ссылку на PDF*/
+                //------------------------------------
+                /*Создаем ссылку на экспорт PDF*/
 
                 /*Получаем в каждой строке таблицы значение data-docid*/
                 /*чтобы потом добавить кнопку на экспорт PDF*/
                 var elementPage = tableSt[i].getAttribute("data-docid");
-
                 var linkPdf = document.createElement('A');
                 linkPdf.href = '/report/export/'+elementPage+'?v=1&short=False';
                 linkPdf.textContent = 'PDF';
                 linkPdf.title = "Ссылка на экспорт отчёта";
                 linkPdf.target = '_blank';
-
+                //------------------------------------
                 /*Создаем ссылку на полный отчёт*/
                 var linkRep = document.createElement('A');
                 linkRep.href = '/report/full/'+elementPage+'?v=1&page=1&showAll=true';
@@ -235,31 +237,14 @@ var gradeRep = document.querySelector('.report-grade');
 //Окно вывода сообщения
 var gradeDialog = document.querySelector('#dialog-template');
 if(fullRepPage){
-    //Проверяем наличие кнопки Оценить
-    if(gradeRep){
-        var titleDiv = document.querySelector('.title');
-        //Функция эмуляции клика на пункт меню
-        function grClick() {
-            gradeRep.click();
-        }
-        //Кнопка Оценить
-        var gradeBut = document.createElement('A');
-        gradeBut.href = '#';
-        gradeBut.textContent = 'Оценить';
-        gradeBut.title = "Вызывает окно оценки работы";
-        gradeBut.onclick = grClick;
-        gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
-        titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
-    }
-    let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-    //if (MutationObserver) console.log('MutationObserver work - fullRepPage');
     //Следим за выставлением статуса работы
     window.onload = function() {
         // Конфигурация observer (за какими изменениями наблюдать)
         const config = {
-            attributes: true,
+            attributes: false,
             childList: true,
-            subtree: true
+            subtree: true,
+            characterData: true
         };
         //Функция закрытия окна с Отчётом
         function closeWindowReport() {
@@ -297,6 +282,23 @@ if(fullRepPage){
         // Начинаем наблюдение за настроенными изменениями целевого элемента
         observer.observe(gradeDialog, config);
     }
+    /* /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ */
+    //Проверяем наличие кнопки Оценить
+    if(gradeRep){
+        var titleDiv = document.querySelector('.title');
+        //Функция эмуляции клика на пункт меню
+        function grClick() {
+            gradeRep.click();
+        }
+        //Кнопка Оценить
+        var gradeBut = document.createElement('A');
+        gradeBut.href = '#';
+        gradeBut.textContent = 'Оценить';
+        gradeBut.title = "Вызывает окно оценки работы";
+        gradeBut.onclick = grClick;
+        gradeBut.setAttribute("style", "display: block;background-color: white;border: 1px solid #c8d7e1;width: min-content;padding: 5px 5px 5px 5px;margin-right: 5px;text-decoration: none;color: #2e4453;font-weight: 700;text-transform: uppercase;font-size: 11px;float: left;-webkit-border-top-left-radius: 3px;-webkit-border-bottom-left-radius: 3px;-webkit-border-top-right-radius: 3px;-webkit-border-bottom-right-radius: 3px;-moz-border-radius-topleft: 3px;-moz-border-radius-bottomleft: 3px;-moz-border-radius-topright: 3px;-moz-border-radius-bottomright: 3px;border-top-left-radius: 3px;border-bottom-left-radius: 3px;border-top-right-radius: 3px;border-bottom-right-radius: 3px;");
+        titleDiv.insertBefore(gradeBut, titleDiv.firstElementChild);
+    }
 }
 /* ------------------------------------- */
 //Экспорт в PDF
@@ -304,40 +306,61 @@ if(fullRepPage){
 var pdfRepPage = document.querySelector('.export-reports-list');
 if(pdfRepPage){
     window.onload = function() {
+        //Нажал на кнопку Скачать
+        var clickLink = false;
         // Конфигурация observer (за какими изменениями наблюдать)
         const config = {
-            attributes: true,
+            attributes: false,
             childList: true,
-            subtree: true
+            subtree: true,
+            characterData: true
         };
-        let MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-        //if (MutationObserver) console.log('MutationObserver work - pdfRepPage');
+
         //Кнопка Экспорт
         var exportButton = pdfRepPage.querySelector('.export-make');
+        //Кнопка Скачать
+        var downloadButton = pdfRepPage.querySelector('.export-download');
         //Функция нажатия на кнопку Экспорт
-        function clickExport() {
-            exportButton.click();
+        function clickExport(buttonExport) {
+            buttonExport.click();
         }
-        //Если она есть
-        if(exportButton){
-            //Ждём 2 секунды и нажимаем на кнопку
-            setTimeout(clickExport, 2000);
+        //Функция нажатия на кнопку Скачать
+        function clickDownload(buttonDownload) {
+            buttonDownload.click();
+            clickLink = true;
         }
         //Функция закрытия окна с экспортом
         function closeWindowExport() {
             window.close();
         }
+        //Если ли кнопка Экспорт?
+        if(exportButton){
+            //Ждём 2 секунды и нажимаем на кнопку Экспорт
+            setTimeout(clickExport(exportButton), 2000);
+        } else {
+            //Проверяем есть ли кнопка Скачать
+            if(downloadButton){
+                //Нажимаем на кнопку и скачиваем pdf отчёт
+                if(clickLink == false) {
+                    //Ждём 2 секунды и нажимаем на кнопку
+                    setTimeout(clickDownload(downloadButton), 2000);
+                    //Закрываем окно
+                    setTimeout(closeWindowExport, 10000);
+                }
+            }
+        }
+
         // Колбэк-функция при срабатывании мутации
         const callback = function(observer) {
             //Кнопка Скачать
             var downloadButton = pdfRepPage.querySelector('.export-download');
-            //Если она есть
+            //Если есть кнопка Экспорт
             if(downloadButton){
-                console.log('downloadButton - pdfRepPage');
-                //Нажимаем на кнопку и скачиваем pdf отчёт
-                downloadButton.click();
-                console.log('click - pdfRepPage');
-                setTimeout(closeWindowExport, 5000);
+                if(clickLink == false) {
+                    //Ждём 2 секунды и нажимаем на кнопку и скачиваем pdf отчёт
+                    setTimeout(clickDownload(downloadButton), 2000);
+                    setTimeout(closeWindowExport, 10000);
+                }
             }
         };
         // Создаём экземпляр наблюдателя с указанной функцией колбэка

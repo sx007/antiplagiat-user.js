@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.2.3
+// @version         0.6.3
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -259,17 +259,29 @@ if(fullRepPage){
             if(gradeDialog){
                 //Есть поле
                 var DialogLen = gradeDialogAll.length;
+                //Получаем id документа
+                var docId = fullRepPage.querySelector('#DocId').getAttribute("value");
                 if(DialogLen > 0){
                     if(DialogLen > 1){
                         //Если есть тэг P, то проверяем его содержимое
                         var DialAll = document.querySelectorAll('#dialog-template')[DialogLen-1].querySelector('p');
                         if (DialAll.textContent == "Отправлена на доработку" || DialAll.textContent == "Оценка сохранена"){
+                            if(document.querySelector('.report-grade > select').selectedIndex == 1 && DialAll.textContent == "Оценка сохранена"){
+                                //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
+                                var linkExport = "/report/export/" + docId + "?v=1&short=False";
+                                window.open(linkExport, '_blank');
+                            }
                             //Через 5 секунд закрываем страницу
                             setTimeout(closeWindowReport, 5000);
                         }
                     } else {
                         //Если есть тэг P, то проверяем его содержимое
                         if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
+                            if(document.querySelector('.report-grade > select').selectedIndex == 1 && gradeDialogP.textContent == "Оценка сохранена"){
+                                //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
+                                var linkExport = "/report/export/" + docId + "?v=1&short=False";
+                                window.open(linkExport, '_blank');
+                            }
                             //Через 5 секунд закрываем страницу
                             setTimeout(closeWindowReport, 5000);
                         }
@@ -409,6 +421,7 @@ function ShowNewJob(){
                 //Переменные для вывода
                 var countNew = 0;
                 var countNotReview = 0;
+                var countReview = 0;
                 var countChecking = 0;
                 var allJobs = 0;
                 //Перебор
@@ -421,6 +434,10 @@ function ShowNewJob(){
                     if (taskJob.Rows[k].Work.Status == "NotReviewed") {
                         countNotReview = countNotReview + 1;
                     }
+                    //Просмотренный
+                    if (taskJob.Rows[k].Work.Status == "Reviewed") {
+                        countReview = countReview + 1;
+                    }
                     //Проверяемых
                     if (taskJob.Rows[k].Work.Status == "Checking") {
                         countChecking = countChecking + 1;
@@ -432,7 +449,7 @@ function ShowNewJob(){
                 var newCountDiv = document.createElement('DIV');
                 var totalCountDiv = document.createElement('DIV');
                 //Если нечего проверять
-                if (countNew == 0 && countNotReview == 0 && countChecking == 0) {
+                if (countNew == 0 && countNotReview == 0 && countReview == 0 && countChecking == 0) {
                     //Если работ нет, то пишем 0
                     newCountDiv.setAttribute("style", "color: #000000;float: left;");
                     newCountDiv.innerHTML = "0";
@@ -440,18 +457,18 @@ function ShowNewJob(){
                     totalCountDiv.innerHTML = "/" + allJobs;
                 }
                 //Если есть новые, непросмотренные, непроверенные
-                if (countNew > 0 && countNotReview > 0 && countChecking > 0) {
+                if (countNew > 0 && countNotReview > 0 && countReview > 0 && countChecking > 0) {
                     //Если есть работы, то суммируем
                     newCountDiv.setAttribute("style", "color: #ff0000;float: left;");
-                    newCountDiv.innerHTML = countNew + countNotReview + countChecking;
+                    newCountDiv.innerHTML = countNew + countNotReview + countReview + countChecking;
                     totalCountDiv.setAttribute("style", "color: #000000;float: left;");
                     totalCountDiv.innerHTML = "/" + allJobs;
                 }
                 //Если что-то есть
-                if (countNew > 0 || countNotReview > 0 || countChecking > 0) {
+                if (countNew > 0 || countNotReview > 0 || countReview > 0 || countChecking > 0) {
                     //Если есть работы, то суммируем
                     newCountDiv.setAttribute("style", "color: #ff0000;float: left;");
-                    newCountDiv.innerHTML = countNew + countNotReview + countChecking;
+                    newCountDiv.innerHTML = countNew + countNotReview + countReview + countChecking;
                     totalCountDiv.setAttribute("style", "color: #000000;float: left;");
                     totalCountDiv.innerHTML = "/" + allJobs;
                 }

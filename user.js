@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.3
+// @version         0.6.3.1
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -266,24 +266,52 @@ if(fullRepPage){
                         //Если есть тэг P, то проверяем его содержимое
                         var DialAll = document.querySelectorAll('#dialog-template')[DialogLen-1].querySelector('p');
                         if (DialAll.textContent == "Отправлена на доработку" || DialAll.textContent == "Оценка сохранена"){
+                            //Зачёт
                             if(document.querySelector('.report-grade > select').selectedIndex == 1 && DialAll.textContent == "Оценка сохранена"){
                                 //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
-                                var linkExport = "/report/export/" + docId + "?v=1&short=False";
-                                window.open(linkExport, '_blank');
+                                var linkExport_1 = "/report/export/" + docId + "?v=1&short=False";
+                                window.open(linkExport_1, '_blank');
+                                //Через 3 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 3000);
                             }
-                            //Через 5 секунд закрываем страницу
-                            setTimeout(closeWindowReport, 5000);
+                            //Незачёт
+                            if(document.querySelector('.report-grade > select').selectedIndex == 2 && DialAll.textContent == "Оценка сохранена"){
+                                //Если выставили Незачёт, то закрыть вкладку с Экспортом отчёта
+                                //Через 1 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 1000);
+                            }
+                            //Чекбокс на доработку
+                            var needRewrite_1 = document.querySelector('.report-grade > .report-grade-need-rewrite > input');
+                            //Если на доработку
+                            if (needRewrite_1.checked){
+                                //Через 1 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 1000);
+                            }
                         }
                     } else {
                         //Если есть тэг P, то проверяем его содержимое
                         if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
+                            //Зачёт
                             if(document.querySelector('.report-grade > select').selectedIndex == 1 && gradeDialogP.textContent == "Оценка сохранена"){
                                 //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
-                                var linkExport = "/report/export/" + docId + "?v=1&short=False";
-                                window.open(linkExport, '_blank');
+                                var linkExport_2 = "/report/export/" + docId + "?v=1&short=False";
+                                window.open(linkExport_2, '_blank');
+                                //Через 3 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 3000);
                             }
-                            //Через 5 секунд закрываем страницу
-                            setTimeout(closeWindowReport, 5000);
+                            //Незачёт
+                            if(document.querySelector('.report-grade > select').selectedIndex == 2 && gradeDialogP.textContent == "Оценка сохранена"){
+                                //Если выставили Незачёт, то закрыть вкладку с Экспортом отчёта
+                                //Через 1 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 1000);
+                            }
+                            //Чекбокс на доработку
+                            var needRewrite_2 = document.querySelector('.report-grade > .report-grade-need-rewrite > input');
+                            //Если на доработку
+                            if (needRewrite_2.checked){
+                                //Через 1 секунд закрываем страницу
+                                setTimeout(closeWindowReport, 1000);
+                            }
                         }
                     }
                 }

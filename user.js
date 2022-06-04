@@ -3,7 +3,7 @@
 // @name:ru         Помощник для работы на сайте Antiplagiat
 // @namespace       https://github.com/sx007/antiplagiat-user.js
 // @homepage        https://github.com/sx007/antiplagiat-user.js
-// @version         0.6.3.2
+// @version         0.6.3.3
 // @description     To simplify the teacher's checks of submitted works
 // @description:ru  Для упрощения проверок преподавателем присланных работ
 // @author          sx007 (Хлибец Иван)
@@ -234,8 +234,8 @@ if(elementPage){
 var fullRepPage = document.querySelector('.main-inner');
 //Оценить в полном отчёте
 var gradeRep = document.querySelector('.report-grade');
-//Окно вывода сообщения
-var gradeDialog = document.querySelector('#dialog-template');
+
+//Если это Полный отчёт
 if(fullRepPage){
     //Следим за выставлением статуса работы
     window.onload = function() {
@@ -252,92 +252,53 @@ if(fullRepPage){
         }
         // Колбэк-функция при срабатывании мутации
         const callback = function(observer) {
-            //Поле статуса
-            var gradeDialogAll = gradeDialog.querySelectorAll('p');
-            var gradeDialogP = gradeDialog.querySelector('p');
-            //Проверка наличия поля статуса
-            if(gradeDialog){
-                console.log("gradeDialog+");
-                //Есть поле
-                var DialogLen = gradeDialogAll.length;
-                console.log("DialogLen", DialogLen);
-                //Получаем id документа
-                var docId = fullRepPage.querySelector('#DocId').getAttribute("value");
-                if(DialogLen > 0){
-                    console.log("DialogLen > 0");
-                    if(DialogLen > 1){
-                        console.log("DialogLen > 1");
-                        console.log("DialogLen-1", DialogLen-1);
-                        //Если есть тэг P, то проверяем его содержимое
-                        var DialAll = document.querySelectorAll('#dialog-template')[DialogLen-1].querySelector('p');
-                        console.log("DialogLen > 1", DialAll);
-                        if (DialAll.textContent == "Отправлена на доработку" || DialAll.textContent == "Оценка сохранена"){
-                            console.log("DialAll.textContent или Оценка сохранена");
+            //Количество диалогов
+            var DialogLen = document.querySelectorAll('#dialog-template').length;
+            //Если диалоги есть
+            if (DialogLen > 0) {
+                //Окно вывода сообщения
+                var gradeDialog = document.querySelectorAll('#dialog-template')[DialogLen-1];
+                //Проверка наличия поля статуса
+                if(gradeDialog){
+                    //Если есть тэг P, то проверяем его содержимое
+                    var valueDialog = gradeDialog.querySelector('p');
+                    //Если есть P элемент
+                    if (valueDialog != null){
+                        //Проверяем на то, что работа оценена
+                        if (valueDialog.textContent == "Отправлена на доработку" || valueDialog.textContent == "Оценка сохранена"){
+                            //Чекбокс На доработку
+                            var needRewrite = document.querySelector('.report-grade > .report-grade-need-rewrite > input');
                             //Зачёт
-                            if(document.querySelector('.report-grade > select').selectedIndex == 1 && DialAll.textContent == "Оценка сохранена"){
-                                console.log("Зачёт");
+                            if(document.querySelector('.report-grade > select').value == "Зачет" && valueDialog.textContent == "Оценка сохранена"){
+                                //Получаем id документа
+                                var docId = fullRepPage.querySelector('#DocId').getAttribute("value");
                                 //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
-                                var linkExport_1 = "/report/export/" + docId + "?v=1&short=False";
-                                window.open(linkExport_1, '_blank');
-                                //Через 0.5 секунд закрываем страницу
-                                setTimeout(closeWindowReport, 500);
+                                var linkExport = "/report/export/" + docId + "?v=1&short=False";
+                                //Открываем новую вкладку с Экспортом
+                                window.open(linkExport, '_blank');
+                                //Через 1 секунду закрываем страницу
+                                setTimeout(closeWindowReport, 1000);
                             }
                             //Незачёт
-                            if(document.querySelector('.report-grade > select').selectedIndex == 2 && DialAll.textContent == "Оценка сохранена"){
-                                console.log("Незачёт");
-                                //Если выставили Незачёт, то закрыть вкладку с Экспортом отчёта
+                            if(document.querySelector('.report-grade > select').value == "Незачет" && valueDialog.textContent == "Оценка сохранена"){
+                                //Если выставили Незачёт, то
                                 //Через 0.5 секунд закрываем страницу
                                 setTimeout(closeWindowReport, 500);
                             }
-                            //Чекбокс на доработку
-                            var needRewrite_1 = document.querySelector('.report-grade > .report-grade-need-rewrite > input');
                             //Если на доработку
-                            if (needRewrite_1.checked){
-                                console.log("needRewrite_1.checked");
-                                //Через 0.5 секунд закрываем страницу
-                                setTimeout(closeWindowReport, 500);
-                            }
-                        }
-                    } else {
-                        console.log("не DialogLen > 0");
-                        //Если есть тэг P, то проверяем его содержимое
-                        if (gradeDialogP.textContent == "Отправлена на доработку" || gradeDialogP.textContent == "Оценка сохранена"){
-                            console.log("Отправлена на доработку или Оценка сохранена");
-                            //Зачёт
-                            if(document.querySelector('.report-grade > select').selectedIndex == 1 && gradeDialogP.textContent == "Оценка сохранена"){
-                                console.log("Зачёт");
-                                //Если выставили зачёт, то открыть вкладку с Экспортом отчёта
-                                var linkExport_2 = "/report/export/" + docId + "?v=1&short=False";
-                                window.open(linkExport_2, '_blank');
-                                //Через 0.5 секунд закрываем страницу
-                                setTimeout(closeWindowReport, 500);
-                            }
-                            //Незачёт
-                            if(document.querySelector('.report-grade > select').selectedIndex == 2 && gradeDialogP.textContent == "Оценка сохранена"){
-                                console.log("Незачёт");
-                                //Если выставили Незачёт, то закрыть вкладку с Экспортом отчёта
-                                //Через 0.5 секунд закрываем страницу
-                                setTimeout(closeWindowReport, 500);
-                            }
-                            //Чекбокс на доработку
-                            var needRewrite_2 = document.querySelector('.report-grade > .report-grade-need-rewrite > input');
-                            //Если на доработку
-                            if (needRewrite_2.checked){
-                                console.log("needRewrite_2.checked");
+                            if (needRewrite.checked){
                                 //Через 0.5 секунд закрываем страницу
                                 setTimeout(closeWindowReport, 500);
                             }
                         }
                     }
                 }
-            } else {
-                console.log("gradeDialog-");
             }
         };
         // Создаём экземпляр наблюдателя с указанной функцией колбэка
         const observer = new MutationObserver(callback);
-        // Начинаем наблюдение за настроенными изменениями целевого элемента
-        observer.observe(gradeDialog, config);
+        // Начинаем наблюдение за настроенными изменениями документа
+        observer.observe(document.body, config);
     }
     /* /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/ */
     //Проверяем наличие кнопки Оценить
